@@ -4,6 +4,7 @@ FROM php:8.2.0-apache
 RUN apt-get update && apt-get install -y \
     openssh-server \
     p7zip-full\
+    supervisor \
     && apt-get clean
 
 # Install Composer globally
@@ -11,6 +12,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Set the working directory
 WORKDIR /var/www/html
+
+# Copy contents of volume to container
+COPY . .
 
 # Expose ports for Apache (80) and SSH (22)
 EXPOSE 80
@@ -27,5 +31,7 @@ RUN ssh-keygen -y -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
     ssh-keygen -y -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' && \
     ssh-keygen -y -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 
-# Start Apache 
-CMD ["apache2-foreground"]
+# Configure supervisord to run Apache and SSH
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["/usr/bin/supervisord"]
