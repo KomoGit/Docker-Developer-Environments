@@ -1,2 +1,2 @@
 # PHP
-Allowing you to developer and debug PHP Applications without needing to install to machine itself.
+Allowing you to develop and debug PHP Applications without needing to install to machine itself.
